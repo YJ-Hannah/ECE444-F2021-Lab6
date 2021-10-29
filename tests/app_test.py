@@ -4,6 +4,7 @@ from pathlib import Path
 
 from project.app import app, init_db
 
+
 TEST_DB = "test.db"
 
 @pytest.fixture
