@@ -1,7 +1,7 @@
 import pytest
-import os
 import json
 from pathlib import Path
+
 
 from project.app import app, db
 
@@ -18,6 +18,7 @@ def client():
     db.create_all()  # setup
     yield app.test_client()  # tests run here
     db.drop_all()  # teardown
+
 
 def login(client, username, password):
     """Login helper function"""
@@ -74,6 +75,7 @@ def test_messages(client):
     assert b"&lt;Hello&gt;" in rv.data
     assert b"<strong>HTML</strong> allowed here" in rv.data
 
+
 def test_delete_message(client):
     """Ensure the messages are being deleted"""
     rv = client.get("/delete/1")
@@ -83,6 +85,7 @@ def test_delete_message(client):
     rv = client.get("/delete/1")
     data = json.loads(rv.data)
     assert data["status"] == 1
+
 
 def test_search(client):
     login(client, app.config["USERNAME"], app.config["PASSWORD"])
@@ -97,10 +100,9 @@ def test_search(client):
         data=dict(title="<Hello>", text="<strong>HTML</strong> not in search"),
         follow_redirects=True,
     )
-    rv = client.get('/search/?query=test', follow_redirects=True)
-    
+    rv = client.get("/search/?query=test", follow_redirects=True)
+
     assert b"&lt;test&gt;" in rv.data
     assert b"<strong>HTML</strong> allowed here" in rv.data
     assert b"&lt;Hello&gt;" not in rv.data
     assert b"<strong>HTML</strong> not in search" not in rv.data
-
